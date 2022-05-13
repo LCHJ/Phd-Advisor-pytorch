@@ -12,11 +12,11 @@ from config import config
 
 
 class Adaptive_homotopy_model(nn.Module):
-    
+
     def __init__(self, input_shape):
         super(Adaptive_homotopy_model, self).__init__()
         self.net = ResNet_VAE(input_shape)  # self.net = VGG6(input_shape[-1])
-    
+
     def forward(self, x):
         # Calculate the deep embedding
         x_reconstruction, z, mu, logvar = self.net.forward(x)
@@ -54,29 +54,29 @@ def distance(z):
 # MSE loss
 def loss_decoder(recon_x, x, mu, logvar):
     MSE = config.Mul_MSN * nn.MSELoss(reduction='sum')(recon_x, x) / x.size(0)
-    BCE = nn.functional.binary_cross_entropy(recon_x, x) / x.size(0)
+    # BCE = nn.functional.binary_cross_entropy(recon_x, x) / x.size(0)
     # KLD = -0.05 * torch.mean(mu.pow(2).add_(logvar.exp()).mul_(-1).add_(1).add_(logvar))
-    return MSE + BCE  # + KLD
+    return MSE# + KLD
 
 
 class AHCL(torch.nn.Module):
-    
+
     def __init__(self):
         super(AHCL, self).__init__()
         self.margin = config.margin
-    
+
     def forward(self, x_reconstruction, x, Adj, mu, logvar):
         f = torch.pow(Adj, 2)
         # D = Adj.clamp(min=1e-8).sqrt()
         g = torch.pow(torch.clamp(self.margin - Adj, min=1e-8), 2)
-        
+
         w = torch.div(f, torch.add(f, g))
         with torch.no_grad():
             Y = torch.div(g, torch.add(f, g))
             Y = torch.max(Y, torch.t(Y))
-            
+
             # k , _ =torch.sort(Y[2])  # Y = torch.where(Y > k[-50], Y / k[-2], Y)  # one = torch.ones_like(Y).cuda()  # Y = torch.where(Y > 0.9, one, Y)
-        
+
         loss_contrastive = config.Multiple_AHML * torch.mean(
             torch.mul(Y, f) + torch.mul(1 - Y, g)) + 0.00001 * torch.norm(w, 2)
         loss_VAE = loss_decoder(x_reconstruction, x, mu, logvar)

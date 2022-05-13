@@ -52,7 +52,7 @@ if __name__ == '__main__':
         os.makedirs(config.model_path)
     print("===>>> Start:{} <<<===\n".format(str(config.save_path)))
 
-    config.Phd_train = False
+    config.Phd_train = True
     config.Phd_test = True
     config.Advisor_train = True
 
