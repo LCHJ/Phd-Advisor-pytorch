@@ -14,7 +14,7 @@ E-mail: xuelong li@ieee.org; ruizhang8633@gmail.com.
 
 ### Requirements
 
-- Python 3
+- Python 3.7
 - PyTorch 1.6.0
 - install requirements via ```
   pip install -r requirements.txt```
