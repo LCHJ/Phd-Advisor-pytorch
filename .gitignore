@@ -1,11 +1,7 @@
-.idea/
+.*
 # mypy
-.mypy_cache/
 .vscode/*
-Advisor_vgae/*
-logs/*
-Phd-advisor-log/*
-Phd_ahcl/*
+logs/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

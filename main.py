@@ -35,7 +35,7 @@ def load_npy():
     T_Truths = np.load(config.save_path + "/" + 'T_Truths.npy')
     A_ThesisFramework = np.load(config.save_path + "/" + 'A_ThesisFramework.npy')
     Z_InitKnowledge = np.load(config.save_path + "/" + 'Z_InitKnowledge.npy')
-    
+
     # To tensor
     X_Inputs = torch.from_numpy(X_Inputs).float()
     T_Truths = torch.from_numpy(T_Truths).float().int()
@@ -51,19 +51,19 @@ if __name__ == '__main__':
     if not os.path.exists(config.model_path):
         os.makedirs(config.model_path)
     print("===>>> Start:{} <<<===\n".format(str(config.save_path)))
-    
-    config.Phd_train = False
+
+    config.Phd_train = True
     config.Phd_test = True
-    config.Advisor_train = False
-    
+    config.Advisor_train = True
+
     if config.Phd_train:
         PhD_main()
-    
+
     if config.Phd_test:
         X_Inputs, T_Truths, A_ThesisFramework, Z_InitKnowledge = Phd_test()
     else:
         X_Inputs, T_Truths, A_ThesisFramework, Z_InitKnowledge = load_npy()
-    
+
     if config.Advisor_train:
         '''
         # Learned the draft generated and Thesis Framework from Phd,
