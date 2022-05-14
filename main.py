@@ -13,12 +13,11 @@ import numpy as np
 import torch
 
 from Advisor_VGAE.Advisor_train import Advisor_main
-
-from PhD_AHML.PhD_train import PhD_main
-from PhD_AHML.Phd_test import Phd_test
 from config import config
+from PhD_AHML.Phd_test import Phd_test
+from PhD_AHML.PhD_train import PhD_main
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 # Use the same random initialization seed to create the same random effect
 # np.random.seed(6)
@@ -31,10 +30,10 @@ device = torch.device("cuda" if Cuda else "cpu")
 
 
 def load_npy():
-    X_Inputs = np.load(config.save_path + "/" + 'X_Inputs.npy')
-    T_Truths = np.load(config.save_path + "/" + 'T_Truths.npy')
-    A_ThesisFramework = np.load(config.save_path + "/" + 'A_ThesisFramework.npy')
-    Z_InitKnowledge = np.load(config.save_path + "/" + 'Z_InitKnowledge.npy')
+    X_Inputs = np.load(config.save_path + "/" + "X_Inputs.npy")
+    T_Truths = np.load(config.save_path + "/" + "T_Truths.npy")
+    A_ThesisFramework = np.load(config.save_path + "/" + "A_ThesisFramework.npy")
+    Z_InitKnowledge = np.load(config.save_path + "/" + "Z_InitKnowledge.npy")
 
     # To tensor
     X_Inputs = torch.from_numpy(X_Inputs).float()
@@ -44,7 +43,7 @@ def load_npy():
     return X_Inputs, T_Truths, A_ThesisFramework, Z_InitKnowledge
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # make dir
     if not os.path.exists(config.save_path):
         os.makedirs(config.save_path)
@@ -52,7 +51,7 @@ if __name__ == '__main__':
         os.makedirs(config.model_path)
     print("===>>> Start:{} <<<===\n".format(str(config.save_path)))
 
-    config.Phd_train = True
+    config.Phd_train = False
     config.Phd_test = True
     config.Advisor_train = True
 
@@ -65,10 +64,10 @@ if __name__ == '__main__':
         X_Inputs, T_Truths, A_ThesisFramework, Z_InitKnowledge = load_npy()
 
     if config.Advisor_train:
-        '''
+        """
         # Learned the draft generated and Thesis Framework from Phd,
         # Use the matrix A_ThesisFramework as the adjacency matrix for Advisor, and X_Inputs for Inputs
-        '''
+        """
         config.save_path = config.Advisor_path
         if not os.path.exists(config.save_path):
             os.makedirs(config.save_path)

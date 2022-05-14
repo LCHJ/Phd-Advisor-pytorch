@@ -283,11 +283,11 @@ class DefaultConfigs(object):
         # ========================  General Advisor config =====================================
 
         self.hidden1 = 256
-        self.hidden2 = 128
+        self.hidden2 = 64
         self.Advisor_dropout = 0.1  # 'Dropout rate (1 - keep probability).'
         self.iteration = 64
         self.Advisor_epochs = self.iteration * 256
-        self.Advisor_lr = 1e-4
+        self.Advisor_lr = 1e-3
         self.Advisor_step_size = self.iteration * 8
         self.Advisor_gamma = 0.98
 

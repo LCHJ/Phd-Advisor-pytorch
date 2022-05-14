@@ -12,7 +12,6 @@ from config import config
 
 
 class Adaptive_homotopy_model(nn.Module):
-
     def __init__(self, input_shape):
         super(Adaptive_homotopy_model, self).__init__()
         self.net = ResNet_VAE(input_shape)  # self.net = VGG6(input_shape[-1])
@@ -53,14 +52,13 @@ def distance(z):
 
 # MSE loss
 def loss_decoder(recon_x, x, mu, logvar):
-    MSE = config.Mul_MSN * nn.MSELoss(reduction='sum')(recon_x, x) / x.size(0)
+    MSE = config.Mul_MSN * nn.MSELoss(reduction="sum")(recon_x, x) / x.size(0)
     # BCE = nn.functional.binary_cross_entropy(recon_x, x) / x.size(0)
-    # KLD = -0.05 * torch.mean(mu.pow(2).add_(logvar.exp()).mul_(-1).add_(1).add_(logvar))
-    return MSE# + KLD
+    KLD = -0.05 * torch.mean(mu.pow(2).add_(logvar.exp()).mul_(-1).add_(1).add_(logvar))
+    return MSE + KLD
 
 
 class AHCL(torch.nn.Module):
-
     def __init__(self):
         super(AHCL, self).__init__()
         self.margin = config.margin
@@ -78,7 +76,8 @@ class AHCL(torch.nn.Module):
             # k , _ =torch.sort(Y[2])  # Y = torch.where(Y > k[-50], Y / k[-2], Y)  # one = torch.ones_like(Y).cuda()  # Y = torch.where(Y > 0.9, one, Y)
 
         loss_contrastive = config.Multiple_AHML * torch.mean(
-            torch.mul(Y, f) + torch.mul(1 - Y, g)) + 0.00001 * torch.norm(w, 2)
+            torch.mul(Y, f) + torch.mul(1 - Y, g)
+        ) + 0.00001 * torch.norm(w, 2)
         loss_VAE = loss_decoder(x_reconstruction, x, mu, logvar)
         return loss_contrastive + loss_VAE, Y
 

@@ -140,11 +140,11 @@ class ResNet_VAE(nn.Module):
 
     def reparameterize(self, mu, logvar):
 
-        std = logvar.mul(0.5).exp_()  # �����׼��
+        std = logvar.mul(0.5).exp_()
         if torch.cuda.is_available():
-            eps = torch.cuda.FloatTensor(std.size()).normal_(0, 0.2)  # �ӱ�׼����̬�ֲ����������һ��eps
+            eps = torch.cuda.FloatTensor(std.size()).normal_(0, 0.4)
         else:
-            eps = torch.FloatTensor(std.size()).normal_(0, 0.2)
+            eps = torch.FloatTensor(std.size()).normal_(0, 0.4)
         eps = Variable(eps)
         return eps.mul(std).add_(mu)
 
@@ -165,7 +165,7 @@ class ResNet_VAE(nn.Module):
         # z = mu
         x_reconstruction = self.decode(z)
         # z = z.view(z.shape[0], -1)
-        return x_reconstruction, mu.data, mu, logvar
+        return x_reconstruction, mu, mu, logvar
 
 # def conv2D_output_size(img_size, padding, kernel_size, stride):
 #     # compute output shape of conv2D

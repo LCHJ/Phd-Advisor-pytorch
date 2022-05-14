@@ -9,16 +9,15 @@ import os
 import sys
 
 import numpy as np
+from config import config
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from sklearn.manifold import TSNE
 
-from config import config
-
 sys.path.append("../")
-
-plt.rcParams["font.sans-serif"] = ["SimHei"]  # 更新字体格式
-
+from pylab import mpl
+# mpl.rcParams['font.sans-serif'] = ['SimHei']  # 指定默认字体为黑体
+mpl.rcParams['axes.unicode_minus'] = False  # 解决保存图像是负号'-'显示为方块的问题
 
 # 统计所有类图片的总数
 def get_image_num(path):
@@ -39,22 +38,33 @@ def get_lr(optimizer):
 
 # rgb to gray
 def rgb2gray(rgb):
-    return (0.2989 * rgb[:, 0] + 0.5870 * rgb[:, 1] + 0.1140 * rgb[:, 2]).view(-1, 1, config.input_shape[0],
-                                                                               config.input_shape[1])
+    return (0.2989 * rgb[:, 0] + 0.5870 * rgb[:, 1] + 0.1140 * rgb[:, 2]).view(
+        -1, 1, config.input_shape[0], config.input_shape[1]
+    )
 
 
 def draw():
     # 保存数据深层表征为.npy
-    np.save(config.save_path + "/" + config.data_name + "_Acc_vs_epoch.npy", config.acc_list)
-    np.save(config.save_path + "/" + config.data_name + "_NMI_vs_epoch.npy", config.nmi_list)
-    np.save(config.save_path + "/" + config.data_name + "_loss_vs_epoch.npy", config.loss_list)
+    np.save(
+        config.save_path + "/" + config.data_name + "_Acc_vs_epoch.npy", config.acc_list
+    )
+    np.save(
+        config.save_path + "/" + config.data_name + "_NMI_vs_epoch.npy", config.nmi_list
+    )
+    np.save(
+        config.save_path + "/" + config.data_name + "_loss_vs_epoch.npy",
+        config.loss_list,
+    )
     # show
     x1 = range(0, len(config.acc_list))
     x2 = range(1, len(config.loss_list) + 1)
     Title = ["ACC vs. epoch", "NMI vs. epoch", "Loss vs. epoch"]
-    legend_list = ['y_sp', 'z_sp', 'z_km', 'z_sp_o', 'z_km_o']
+    legend_list = ["y_sp", "z_sp", "z_km", "z_sp_o", "z_km_o"]
     plt.close()
-    plt.figure(figsize=(13, 4), dpi=100,)
+    plt.figure(
+        figsize=(13, 4),
+        dpi=100,
+    )
     plt.suptitle(config.save_path[7:])
     plt.tight_layout()  # 调整整体空白
     plt.subplots_adjust(hspace=0, wspace=0.2)
@@ -64,8 +74,22 @@ def draw():
     ax.plot(x1, config.acc_list[:, 1], "b.-", label=legend_list[1], markersize=3)
     ax.plot(x1, config.acc_list[:, 2], "c.-", label=legend_list[2], markersize=3)
 
-    ax.axhline(100 * config.acc_init[1], color='g', linestyle='-.', linewidth=0.5, alpha=0.5, label='legend_list[2]')
-    ax.axhline(100 * config.acc_init[2], color='c', linestyle='--', linewidth=0.5, alpha=0.5, label='legend_list[3]')
+    ax.axhline(
+        100 * config.acc_init[1],
+        color="g",
+        linestyle="-.",
+        linewidth=0.5,
+        alpha=0.5,
+        label="legend_list[2]",
+    )
+    ax.axhline(
+        100 * config.acc_init[2],
+        color="c",
+        linestyle="--",
+        linewidth=0.5,
+        alpha=0.5,
+        label="legend_list[3]",
+    )
 
     ax.legend(legend_list, loc="lower right")
     ax.set_title(Title[0], fontsize="small")
@@ -78,8 +102,22 @@ def draw():
     ax2.plot(x1, config.nmi_list[:, 1], "b.-", label=legend_list[1], markersize=3)
     ax2.plot(x1, config.nmi_list[:, 2], "c.-", label=legend_list[2], markersize=3)
 
-    ax2.axhline(100 * config.nmi_init[1], color='g', linestyle='-.', linewidth=0.5, alpha=0.5, label='legend_list[2]')
-    ax2.axhline(100 * config.nmi_init[2], color='c', linestyle='--', linewidth=0.5, alpha=0.5, label='legend_list[3]')
+    ax2.axhline(
+        100 * config.nmi_init[1],
+        color="g",
+        linestyle="-.",
+        linewidth=0.5,
+        alpha=0.5,
+        label="legend_list[2]",
+    )
+    ax2.axhline(
+        100 * config.nmi_init[2],
+        color="c",
+        linestyle="--",
+        linewidth=0.5,
+        alpha=0.5,
+        label="legend_list[3]",
+    )
 
     ax2.legend(legend_list, loc="lower right")
     ax2.set_title(Title[1], fontsize="small")
@@ -93,6 +131,7 @@ def draw():
     ax3.set_title(Title[2], fontsize="small")
     ax3.set_xlabel(str("{:.5f}".format(config.loss_list[-1])))
     ax3.set_ylabel("Loss")
+    plt.yscale("log")
 
     plt.savefig(config.save_path + "/" + config.data_name + "_Acc&loss_vs_epoch.png")
     plt.pause(0.5)
@@ -108,7 +147,9 @@ def contrast_show(x_reconstruction, x):
     # show
     # plt.clf()
     plt.close()
-    fig, ax = plt.subplots(2, len(x), sharex="col", sharey="row", figsize=(6, 2.6), dpi=160)
+    fig, ax = plt.subplots(
+        2, len(x), sharex="col", sharey="row", figsize=(6, 2.6), dpi=160
+    )
     fig.suptitle(config.save_path[7:], fontsize="small")
     fig.tight_layout()  # 调整整体空白
     fig.subplots_adjust(hspace=0, wspace=0)
@@ -118,7 +159,9 @@ def contrast_show(x_reconstruction, x):
         ax[0, i].imshow(x[i], cmap="Greys")
         ax[1, i].imshow(x_reconstruction[i], cmap="Greys")
 
-    plt.savefig(config.save_path + "/" + config.data_name + "_Origin_vs_Reconstruct.png")
+    plt.savefig(
+        config.save_path + "/" + config.data_name + "_Origin_vs_Reconstruct.png"
+    )
     plt.pause(1)
 
 
@@ -147,9 +190,18 @@ def plot_embeddings(embeddings, Labels, kind="Z", epoch="0", Is_good=False):
     # plot
     for c, idx in color_idx.items():
         # 根据权重
-        plt.scatter(node_pos[idx, 0], node_pos[idx, 1], label=c, s=10, marker=markers[int(c) % 10], alpha=1, )
+        plt.scatter(
+            node_pos[idx, 0],
+            node_pos[idx, 1],
+            label=c,
+            s=10,
+            marker=markers[int(c) % 10],
+            alpha=1,
+        )
 
-    plt.savefig(config.save_path + "/" + str("000{}_{}_TSNE.png".format(epoch, kind))[-17:])
+    plt.savefig(
+        config.save_path + "/" + str("000{}_{}_TSNE.png".format(epoch, kind))[-17:]
+    )
     plt.pause(0.5)
     return node_pos, color_idx
 
@@ -159,7 +211,7 @@ def metric_visual(Y, epoch="0"):
     y = np.sort(Y[100])
     print("{}\n{}\n".format(y[:5], y[-5:]))
 
-    Y = np.where(Y > y[-300], Y / y[-3], Y)
+    Y = np.where(Y > y[-64], Y / y[-3], Y)
     # Y = np.where(Y > 0.02, Y*80.0, Y)
 
     img = np.where(Y > 0.9, 1.0, Y)
@@ -242,6 +294,11 @@ def draw_loss(loss, color, name):
     ax.xaxis.set_major_locator(x_major_locator)
     plt.xticks(fontsize=23)
     plt.yticks(fontsize=23)
-    plt.savefig(r"C:\Users\HP\OneDrive\paper\NeurIPS 2021" + "/" + str(name) + "_loss_vs_epoch.png",
-                bbox_inches="tight", )
+    plt.savefig(
+        r"C:\Users\HP\OneDrive\paper\NeurIPS 2021"
+        + "/"
+        + str(name)
+        + "_loss_vs_epoch.png",
+        bbox_inches="tight",
+    )
     plt.show()

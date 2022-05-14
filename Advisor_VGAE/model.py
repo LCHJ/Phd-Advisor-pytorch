@@ -2,31 +2,32 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+from torch.autograd import Variable
 from Advisor_VGAE.layers import GraphConvolution
 
 
 class GCNModelVAE(nn.Module):
-    
+
     def __init__(self, input_feat_dim, hidden_dim1, hidden_dim2, dropout):
         super(GCNModelVAE, self).__init__()
         self.gc1 = GraphConvolution(input_feat_dim, hidden_dim1, dropout, act=F.relu)
         self.gc2 = GraphConvolution(hidden_dim1, hidden_dim2, dropout, act=lambda x: x)
         self.gc3 = GraphConvolution(hidden_dim1, hidden_dim2, dropout, act=lambda x: x)
         self.dc = InnerProductDecoder(dropout, act=lambda x: x)
-    
+
     def encode(self, x, adj):
         hidden1 = self.gc1(x, adj)
         return self.gc2(hidden1, adj), self.gc3(hidden1, adj)
-    
+
     def reparameterize(self, mu, logvar):
-        if self.training:
-            std = torch.exp(logvar)
-            eps = torch.randn_like(std)
-            return eps.mul(std).add_(mu)
+        std = logvar.mul(0.5).exp_()
+        if torch.cuda.is_available():
+            eps = torch.cuda.FloatTensor(std.size()).normal_(0, 0.2)
         else:
-            return mu
-    
+            eps = torch.FloatTensor(std.size()).normal_(0, 0.2)
+        eps = Variable(eps)
+        return eps.mul(std).add_(mu)
+
     def forward(self, x, adj):
         mu, logvar = self.encode(x, adj)
         z = self.reparameterize(mu, logvar)
@@ -35,17 +36,17 @@ class GCNModelVAE(nn.Module):
 
 class InnerProductDecoder(nn.Module):
     """Decoder for using inner product for prediction."""
-    
+
     def __init__(self, dropout, act=torch.sigmoid):
         super(InnerProductDecoder, self).__init__()
         self.dropout = dropout
         self.act = act
-    
+
     def forward(self, z):
         z = F.dropout(z, self.dropout, training=self.training)
         adj = self.act(torch.mm(z, z.t()))
         return adj
-        
+
         # Dist = euclidean_dist(z, z)
         # Dist = Dist / Dist.max()
         #
