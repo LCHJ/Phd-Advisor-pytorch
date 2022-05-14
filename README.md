@@ -1,24 +1,26 @@
-# gae-pytorch
+# This is a PyTorch implementation for the experiment of our paper "Learning From The Creature: Ph.D-Advisor Knowledge Transferring Mechanism".
 
-Graph Auto-Encoder in PyTorch
 
-This is a PyTorch implementation of the Variational Graph Auto-Encoder model described in the paper:
+Phd with AHML network and Advisor with VGAE network in PyTorch.
 
-T. N. Kipf, M. Welling, [Variational Graph Auto-Encoders](https://arxiv.org/abs/1611.07308), NIPS Workshop on Bayesian
-Deep Learning (2016)
+Xuelong Li 1⇤ AAAS Fellow, Ziheng Jiao1, Chengjun Lu1, Rui Zhang1⇤ 
+School of Artificial Intelligence, OPtics and ElectroNics (iOPEN),
+Northwestern Polytechnical University, 710072, CN
+⇤To whom correspondence should be addressed;
+E-mail: xuelong li@ieee.org; ruizhang8633@gmail.com.
 
-The code in this repo is based on or refers to https://github.com/tkipf/gae, https://github.com/tkipf/pygcn
-and https://github.com/vmasrani/gae_in_pytorch.
+![Learning From The Creature Ph D-Advisor](https://user-images.githubusercontent.com/50138258/168273200-a0ab1161-695d-4327-8727-b10baf4fc952.png)
+
 
 ### Requirements
 
-- Python 3
-- PyTorch 0.4
+- Python 3.7
+- PyTorch 1.6.0
 - install requirements via ```
   pip install -r requirements.txt```
 
 ### How to run
 
 ```bash
-python gae/train.py
+python main.py
 ```
